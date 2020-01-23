@@ -21,7 +21,7 @@ CO_NotifyPipe_t *CO_NotifyPipeCreate(void)
     if (ret < 0) {
         return NULL;
     }
-    p = calloc(1, sizeof(CO_NotifyPipe_t));
+    p = (CO_NotifyPipe_t*) calloc(1, sizeof(CO_NotifyPipe_t));
     if (p == NULL) {
         return NULL;
     }

@@ -24,9 +24,10 @@
  * limitations under the License.
  */
 
-
+extern "C" {
 #include "CANopen.h"
-
+#include "CO_OD.h"
+}
 
 #define TMR_TASK_INTERVAL   (1000)          /* Interval of tmrTask thread in microseconds */
 #define INCREMENT_1MS(var)  (var++)         /* Increment 1ms variable in tmrTask */
@@ -43,7 +44,7 @@ struct CANbase {
 
 
 /* main ***********************************************************************/
-int main (void){
+int main (int argc, char* argv[]){
     CO_NMT_reset_cmd_t reset = CO_RESET_NOT;
 
     /* Configure microcontroller. */

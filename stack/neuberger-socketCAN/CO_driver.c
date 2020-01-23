@@ -133,7 +133,7 @@ static CO_ReturnError_t disableRx(CO_CANmodule_t *CANmodule)
 static CO_ReturnError_t setRxFilters(CO_CANmodule_t *CANmodule)
 {
     int ret;
-    int i;
+    unsigned int i;
     int count;
     CO_ReturnError_t retval;
 
@@ -261,7 +261,7 @@ CO_ReturnError_t CO_CANmodule_init(
     /* initialize socketCAN filters
      * CAN module filters will be configured with CO_CANrxBufferInit()
      * functions, called by separate CANopen init functions */
-    CANmodule->rxFilter = calloc(CANmodule->rxSize, sizeof(struct can_filter));
+    CANmodule->rxFilter = (can_filter*) calloc(CANmodule->rxSize, sizeof(struct can_filter));
     if(CANmodule->rxFilter == NULL){
         log_printf(LOG_DEBUG, DBG_ERRNO, "malloc()");
         return CO_ERROR_OUT_OF_MEMORY;
@@ -288,7 +288,7 @@ CO_ReturnError_t CO_CANmodule_init(
 #else
     ret = CO_ERROR_NO;
 #endif
-    return ret;
+    return (CO_ReturnError_t) ret;
 }
 
 
@@ -319,7 +319,7 @@ CO_ReturnError_t CO_CANmodule_addInterface(
 
     /* Add interface to interface list */
     CANmodule->CANinterfaceCount ++;
-    CANmodule->CANinterfaces = realloc(CANmodule->CANinterfaces,
+    CANmodule->CANinterfaces = (CO_CANinterface_t*) realloc(CANmodule->CANinterfaces,
         ((CANmodule->CANinterfaceCount) * sizeof(*CANmodule->CANinterfaces)));
     if (CANmodule->CANinterfaces == NULL) {
         log_printf(LOG_DEBUG, DBG_ERRNO, "malloc()");
@@ -414,7 +414,7 @@ CO_ReturnError_t CO_CANmodule_addInterface(
     /* rx is started by calling #CO_CANsetNormalMode() */
     ret = disableRx(CANmodule);
 
-    return ret;
+    return (CO_ReturnError_t) ret;
 }
 
 

@@ -1,13 +1,14 @@
 # Makefile for CANopenNode, basic compile with no CAN device.
 
 
-DRV_SRC = example
+#DRV_SRC = example
+DRV_SRC =  stack/neuberger-socketCAN
 STACK_SRC = stack
 CANOPEN_SRC =.
-APPL_SRC = example
+APPL_SRC = app
 
 
-LINK_TARGET = canopennode
+LINK_TARGET = CO_BBB
 
 
 INCLUDE_DIRS = \
@@ -18,8 +19,6 @@ INCLUDE_DIRS = \
 
 
 SOURCES = \
-	$(DRV_SRC)/CO_driver.c \
-	$(DRV_SRC)/eeprom.c \
 	$(STACK_SRC)/crc16-ccitt.c \
 	$(STACK_SRC)/CO_SDO.c \
 	$(STACK_SRC)/CO_Emergency.c \
@@ -32,15 +31,26 @@ SOURCES = \
 	$(STACK_SRC)/CO_LSSmaster.c \
 	$(STACK_SRC)/CO_LSSslave.c \
 	$(STACK_SRC)/CO_trace.c \
-	$(CANOPEN_SRC)/CANopen.c \
+	$(DRV_SRC)/CO_notify_pipe.c \
+	$(DRV_SRC)/CO_driver.c \
 	$(APPL_SRC)/CO_OD.c \
-	$(APPL_SRC)/main.c
+	$(CANOPEN_SRC)/CANopen.c \
+	$(APPL_SRC)/main.cpp
+	#$(DRV_SRC)/eeprom.c \
 
 
-OBJS = $(SOURCES:%.c=%.o)
-CC = gcc
-CFLAGS = -Wall $(INCLUDE_DIRS)
-LDFLAGS =
+
+DEPS := $(OBJS:.o=.d)
+
+-include $(DEPS)
+
+COBJS := $(SOURCES:%.c=%.o)
+OBJS := $(COBJS:%.cpp=%.o)
+#OBJS = $(SOURCES:%.c=%.o)
+#CC = g++
+CC = /home/user/BBB/compiler/gcc_arm/bin/arm-linux-gnueabihf-g++
+CFLAGS = -Wall -g $(INCLUDE_DIRS)
+LDFLAGS = -Wall -g 
 
 
 .PHONY: all clean doc
@@ -48,12 +58,15 @@ LDFLAGS =
 all: clean $(LINK_TARGET)
 
 clean:
-	rm -f $(OBJS) $(LINK_TARGET)
+	rm -f $(OBJS) $(LINK_TARGET) $(DEPS)
 
 doc:
 	doxygen
 
 %.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(LINK_TARGET): $(OBJS)

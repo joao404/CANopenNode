@@ -33,6 +33,7 @@
 #ifndef CO_OD_H
 #define CO_OD_H
 
+#include "CO_SDO.h"
 
 /*******************************************************************************
    CANopen DATA DYPES
@@ -105,7 +106,7 @@
    OBJECT DICTIONARY
 *******************************************************************************/
    #define CO_OD_NoOfElements             56
-
+extern const CO_OD_entry_t CO_OD[CO_OD_NoOfElements];
 
 /*******************************************************************************
    TYPE DEFINITIONS FOR RECORDS
